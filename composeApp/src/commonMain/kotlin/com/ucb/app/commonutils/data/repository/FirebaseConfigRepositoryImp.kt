@@ -11,16 +11,17 @@ class FirebaseConfigRepositoryImp(
     private val connectivityChecker: ConnectivityChecker
 ) : ConfigRepository {
 
-    private val configKeys = listOf("greeting_text")
+    private val greetingKey = "greeting_text"
 
     override suspend fun sync() {
         if (!connectivityChecker.isConnected()) return
 
-        if (remoteConfig.fetchAndActivate()) {
-            configKeys.forEach { key ->
-                val value = remoteConfig.getString(key)
-                localDataSource.saveConfig(key, value)
-            }
+        remoteConfig.fetchAndActivate()
+
+        val value = remoteConfig.getString(greetingKey)
+
+        if (value.isNotBlank()) {
+            localDataSource.saveConfig(greetingKey, value)
         }
     }
 
@@ -28,7 +29,8 @@ class FirebaseConfigRepositoryImp(
         if (connectivityChecker.isConnected()) {
             sync()
         }
-        return localDataSource.getConfig("greeting_text")
-            ?: remoteConfig.getString("greeting_text")
+
+        return localDataSource.getConfig(greetingKey)
+            ?: "Sin configuración guardada"
     }
 }
