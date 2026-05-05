@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "332911979364",
+    "firebase_url": "https://cryptoappmauricio-default-rtdb.firebaseio.com",
+    "project_id": "cryptoappmauricio",
+    "storage_bucket": "cryptoappmauricio.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332911979364:android:9e4b327bf63e629416a871",
+        "android_client_info": {
+          "package_name": "com.ucb.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5TrjpjEdTNdwZ99MSU5FpxlT07HxmGgk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
