@@ -39,9 +39,12 @@ fun CryptoScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CryptoEffect.ShowError -> {
-
+                    println(effect.message)
                 }
-                is CryptoEffect.ShowSuccess -> TODO()
+
+                is CryptoEffect.ShowSuccess -> {
+                    println(effect.message)
+                }
             }
         }
     }

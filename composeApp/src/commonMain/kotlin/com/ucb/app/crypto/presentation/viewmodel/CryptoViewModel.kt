@@ -13,11 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 
 class CryptoViewModel(
     private val getCryptoUseCase: GetCryptoUseCase,
     private val getGreetingTextUsecase: GetGreetingTextUseCase
-): ViewModel() {
+) : ViewModel() {
+
     private val _state = MutableStateFlow(CryptoState())
     val state = _state.asStateFlow()
 
@@ -28,33 +30,49 @@ class CryptoViewModel(
         when (event) {
             CryptoEvent.OnLoad -> loadCrypto()
             CryptoEvent.OnRefresh -> loadCrypto()
-            CryptoEvent.OnSave -> TODO()
+            CryptoEvent.OnSave -> Unit
         }
     }
 
     private fun loadCrypto() {
-        _state.update { it.copy(isLoading = true, error = null) }
+        _state.update {
+            it.copy(
+                isLoading = true,
+                error = null
+            )
+        }
 
         viewModelScope.launch {
             try {
-                val greetingMessage = getGreetingTextUsecase.invoke()
-                val cryptosList = getCryptoUseCase.invoke()
-                println("GREETING: $greetingMessage")
+                val greetingMessage = withTimeoutOrNull(5000) {
+                    getGreetingTextUsecase.invoke()
+                } ?: "Sin configuración remota"
+
+                val cryptosList = withTimeoutOrNull(7000) {
+                    getCryptoUseCase.invoke()
+                } ?: emptyList()
+
                 _state.update {
                     it.copy(
                         isLoading = false,
                         greeting = greetingMessage,
-                        cryptos = cryptosList
+                        cryptos = cryptosList,
+                        error = null
                     )
                 }
+
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        error = "Error retrieving data from API"
+                        cryptos = emptyList(),
+                        error = e.message ?: "No se pudieron cargar las criptomonedas"
                     )
                 }
-                _effect.send(CryptoEffect.ShowError("Error retrieving data from API"))
+
+                _effect.send(
+                    CryptoEffect.ShowError("No se pudieron cargar las criptomonedas")
+                )
             }
         }
     }
