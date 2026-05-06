@@ -15,6 +15,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import com.ucb.app.crypto.data.local.CryptoDraftDao
+import com.ucb.app.crypto.data.repository.CryptoDraftRepositoryImp
+import com.ucb.app.crypto.domain.repository.CryptoDraftRepository
 
 val appEventDataModule = module {
     single {
@@ -31,4 +34,6 @@ val appEventDataModule = module {
     singleOf(::ConnectivityChecker)
     single { WorkManager.getInstance(androidContext()) }
     singleOf(::AppEventRepositoryImp).bind<AppEventRepository>()
+    single<CryptoDraftDao> { get<AppDatabase>().cryptoDraftDao() }
+    singleOf(::CryptoDraftRepositoryImp).bind<CryptoDraftRepository>()
 }

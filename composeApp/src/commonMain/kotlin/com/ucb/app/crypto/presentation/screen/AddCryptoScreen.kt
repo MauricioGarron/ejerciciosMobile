@@ -41,13 +41,23 @@ fun AddCryptoScreen(
             when (effect) {
                 is CryptoEffect.ShowSuccess -> {
                     message = effect.message
-                    navController.navigate(NavRoute.Crypto)
+
+                    if (effect.message.contains("sincronizada", ignoreCase = true)) {
+                        navController.navigate(NavRoute.Crypto)
+                    }
                 }
                 is CryptoEffect.ShowError -> {
                     message = effect.message
                 }
             }
         }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.startAutoSave(
+            getId = { id },
+            getName = { name },
+            getPriceText = { priceText }
+        )
     }
 
     Column(
